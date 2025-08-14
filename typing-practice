@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>兒童英文／注音 鍵盤指法練習｜單檔HTML</title>
+<style>
+  :root{
+    --bg1:#eef6ff;--bg2:#f5efff;--card:#ffffff;--text:#1f2937;--muted:#6b7280;--ring:#00000022;
+    --LP:#f9a8d4;--LR:#fda4af;--LM:#fdba74;--LI:#fbbf24;--LT:#fef08a;--RI:#86efac;--RM:#7dd3fc;--RR:#a5b4fc;--RP:#f0abfc;--NA:#e5e7eb;
+    --LP-b:#db2777;--LR-b:#be123c;--LM-b:#ea580c;--LI-b:#d97706;--LT-b:#f59e0b;--RI-b:#16a34a;--RM-b:#0284c7;--RR-b:#4338ca;--RP-b:#a21caf;--NA-b:#9ca3af;
+  }
+  *{box-sizing:border-box} html,body{height:100%} body{margin:0;font-family:ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans TC",Arial; color:var(--text); background:linear-gradient(180deg,var(--bg1),var(--bg2));}
+  .container{max-width:1100px;margin:0 auto;padding:16px}
+  h1{margin:0;font-size:28px;font-weight:800}
+  .subtitle{color:var(--muted);font-size:12px}
+  .toolbar{display:flex;flex-wrap:wrap;gap:8px}
+  .btn, select{border:1px solid #e5e7eb;background:#fff;padding:8px 12px;border-radius:12px;box-shadow:0 1px 0 #0000000a;font-size:14px;cursor:pointer}
+  .btn:hover{background:#f9fafb}
+  .grid{display:grid;gap:16px;align-items:start}
+  .grid>.col{min-width:0}
+  @media(min-width:900px){.grid{grid-template-columns:1.6fr 1fr}}
+  .card{background:var(--card);border:1px solid #e5e7eb;border-radius:16px;box-shadow:inset 0 1px 0 #00000008,0 2px 8px #00000008;padding:12px}
+  .title{font-weight:700;margin:4px 0 6px 0}
+  .small{font-size:12px;color:var(--muted)}
+  .lesson-text{background:#fff;border-radius:16px;box-shadow:inset 0 1px 0 #00000008,0 2px 8px #00000008;padding:16px;line-height:1.9;max-height:var(--lt-max,120px);overflow:hidden;white-space:normal;overflow-wrap:anywhere;word-break:break-word}
+  .lesson-text.big{font-size:28px}
+  .lesson-text.small{font-size:18px}
+  .cursor{background:#fde68a;text-decoration:underline;text-decoration-thickness:3px;border-radius:4px}
+  .ok{color:#059669}
+  .bad{background:#fecdd3;color:#7f1d1d;border-radius:4px}
+  .stats{display:flex;flex-wrap:wrap;gap:10px;align-items:center}
+  .stats .chip{background:#ffffffb3;border:1px solid #e5e7eb;border-radius:12px;padding:8px 10px;box-shadow:0 1px 3px #0000000a;font-size:14px}
+  .kbd{user-select:none;border-radius:14px;border:2px solid var(--NA-b);display:flex;align-items:center;justify-content:center;height:52px;box-shadow:0 1px 2px #00000010;transition:.05s transform}
+  .kbd.pressed{transform:scale(.96);box-shadow:0 0 0 4px var(--ring)}
+  .kbd .label{font-weight:600}
+  .row{display:flex;gap:8px;margin:8px 0}
+  .kbd[data-finger="LP"]{background:var(--LP);border-color:var(--LP-b)}
+  .kbd[data-finger="LR"]{background:var(--LR);border-color:var(--LR-b)}
+  .kbd[data-finger="LM"]{background:var(--LM);border-color:var(--LM-b)}
+  .kbd[data-finger="LI"]{background:var(--LI);border-color:var(--LI-b)}
+  .kbd[data-finger="RI"]{background:var(--RI);border-color:var(--RI-b)}
+  .kbd[data-finger="RM"]{background:var(--RM);border-color:var(--RM-b)}
+  .kbd[data-finger="RR"]{background:var(--RR);border-color:var(--RR-b)}
+  .kbd[data-finger="RP"]{background:var(--RP);border-color:var(--RP-b)}
+  .kbd[data-finger="LT"], .kbd[data-finger="RT"]{background:var(--LT);border-color:var(--LT-b)}
+  .kbd[data-target="1"]{outline:4px solid #facc15}
+  .legend{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+  @media(min-width:600px){.legend{grid-template-columns:repeat(3,minmax(0,1fr))}}
+  .legend .item{display:flex;align-items:center;gap:8px;border-radius:10px;border:1px solid #e5e7eb;padding:8px}
+  .dot{width:12px;height:12px;border-radius:999px;border:2px solid #00000030}
+  footer{color:#9ca3af;text-align:center;font-size:12px;padding:8px}
+</style>
+</head>
+<body>
+  <div class="container">
+    <header style="display:flex;flex-direction:column;gap:8px;align-items:flex-start;justify-content:space-between;margin-bottom:12px" id="header">
+      <div>
+        <h1>兒童鍵盤指法練習</h1>
+        <div class="subtitle">英文鍵盤／注音鍵盤(大千式) 一鍵切換｜繁中介面｜單檔HTML</div>
+      </div>
+      <div class="toolbar">
+        <button class="btn" id="modeEN">英文練習</button>
+        <button class="btn" id="modeBPMF">注音練習</button>
+        <select id="lessonSelect"></select>
+        <button class="btn" id="nextChunk">下一段 ▶</button>
+        <button class="btn" id="toggleFont">開啟大字</button>
+        <button class="btn" id="toggleSound">開啟音效</button>
+        <button class="btn" id="toggleGuide">隱藏指法圖</button>
+        <button class="btn" id="resetBtn">重來 ↺</button>
+      </div>
+    </header>
+
+    <section class="grid">
+      <div class="col main">
+        <div class="card">
+          <div class="title" id="lessonTitle"></div>
+          <div class="small" id="lessonDesc"></div>
+        </div>
+        <div id="lessonText" class="lesson-text big"></div>
+        <div class="card">
+          <div class="stats">
+            <div class="chip"><b>WPM</b>：<span id="wpm">0</span></div>
+            <div class="chip">正確率：<span id="acc">100</span>%</div>
+            <div class="chip">錯誤：<span id="errors">0</span></div>
+            <div class="chip">連續正確：<span id="streak">0</span></div>
+          </div>
+        </div>
+      </div>
+      <div class="col side" id="guideCol">
+        <div class="card">
+          <div class="title">指法對應</div>
+          <div class="legend" id="legend"></div>
+          <div class="small" style="margin-top:8px">提示：英文以F/J定位；注音採「大千式」標準排列。</div>
+          <div style="margin-top:10px;font-size:14px">目前目標鍵：<span id="currentTarget" style="font-weight:700"></span></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card" style="margin-top:8px">
+      <div id="keyboard"></div>
+    </section>
+
+    <footer>© 2025 鍵盤指法練習｜適用兒童與初學者｜US ANSI／大千式注音鍵位示意</footer>
+  </div>
+
+<script>
+(function(){
+  // --- 保險：CSS.escape polyfill ---
+  if(!window.CSS){ window.CSS = {}; }
+  if(!CSS.escape){ CSS.escape = function(s){ return String(s).replace(/([.#$:\\[\]\(\)\+\*\?\^\|])/g,'\\$1'); }; }
+
+  const MODE_EN = "english"; const MODE_BPMF = "bpmf"; let mode = MODE_EN; // 預設英文，避免初載就報錯
+
+  // --- 課程 ---
+  const lessonsEN = [
+    {id:"home-base", title:"英文：基準鍵FJ與主鍵列", desc:"從F與J定位開始，熟悉ASDF與JKL;",
+      chunks:["fff jjj fff jjj fjfj fjfj f j f j","asdf jkl; asdf jkl; asdfg hjkl;","a s d f j k l ; asdfjkl; asdf jkl; asdfjkl;"]},
+    {id:"home-row", title:"英文：主鍵列ASDFJKL;", desc:"只用主鍵列反覆練習",
+      chunks:["asdf asdf asdf fdsajkl; ;lkj jkl; asdf asdf;","as as df fj jk kl ;l jj kk ll ;; jj kk ll ;;","alaska salad salad fall afjal; alaska salad fall"]},
+    {id:"top-row", title:"英文：上排QWERTY UIOP", desc:"加入上排，與主鍵列交替",
+      chunks:["qwer tyui qwer tyui qw er ty ui qwer tyui","type type quite quite try try try type type","quiet true rule write type quilt type write"]},
+    {id:"bottom-row", title:"英文：下排ZXCVBNM", desc:"加入下排字母",
+      chunks:["zxcv bnm zxcv bnm zx cv bn m zxcv bnm","mix box max zoom exam cabin mix box max","banana muffin pizza move comb banana move muffin"]},
+    // 新增：第5類 文章段落練習（單字/句子/段落，長期可練）
+    {id:"paragraphs", title:"英文：文章段落練習", desc:"單字、句子與文章長段混合練習，循序漸進、可長期使用",
+      chunks:[
+        // Level 1 單字（暖身）
+        "apple banana orange coffee water music happy learn read write",
+        "keyboard monitor window school family friend practice memory focus",
+        // Level 2 句子（節奏感）
+        "I practice typing every day to build muscle memory.",
+        "Small steps done well become great progress over time.",
+        "Please keep your eyes on the text and your fingers on home row.",
+        "Consistency beats speed. Accuracy comes first, then speed follows.",
+        // Level 3 短文（50~120字）
+        "The quick brown fox jumps over the lazy dog. This classic pangram uses every letter in the alphabet and is perfect for warming up. Type it slowly at first, then repeat it a few times and try to keep a steady rhythm.",
+        "Typing is like learning an instrument. You start with scales, then simple songs, and finally full pieces. When you make a mistake, pause, breathe, and correct it gently. Good posture and relaxed shoulders help a lot.",
+        "On rainy days I like to read by the window and write short notes. The sound of the rain keeps a soft beat. I try to follow that beat while typing, one word after another, without rushing.",
+        // Level 4 長段（150~300字）
+        "Once upon a time there was a class that trained for ten minutes every day. At first the students focused on accuracy, tapping one key at a time. After a week they started to feel the layout in their hands. They learned to keep their eyes on the text and trust their fingers to move. Some days were fast, some days were slow, but the habit stayed. By the end of the month everyone typed longer paragraphs with calm rhythm and steady breathing.",
+        "Pack my box with five dozen liquor jugs. Sphinx of black quartz, judge my vow. These pangrams are fun challenges, but the real skill is to stay relaxed. Keep your wrists light, press with only the force you need, and let the words flow like water across the page."
+      ]}
+  ];
+
+  const lessonsBPMF = [
+    {id:"bpmf1", title:"注音：基本聲母①", desc:"ㄅ ㄆ ㄇ ㄈ；ㄉ ㄊ ㄋ ㄌ",
+      chunks:["ㄅ ㄆ ㄇ ㄈ ㄅㄆㄇㄈ ㄅㄅ ㄆㄆ ㄇㄇ ㄈㄈ","ㄉ ㄊ ㄋ ㄌ ㄉㄊㄋㄌ ㄉㄉ ㄊㄊ ㄋㄋ ㄌㄌ","ㄅㄆ ㄇㄈ ㄉㄊ ㄋㄌ ㄅㄉ ㄆㄊ ㄇㄋ ㄈㄌ"]},
+    {id:"bpmf2", title:"注音：基本聲母②", desc:"ㄍ ㄎ ㄏ；ㄐ ㄑ ㄒ",
+      chunks:["ㄍ ㄎ ㄏ ㄍㄎㄏ ㄍㄍ ㄎㄎ ㄏㄏ","ㄐ ㄑ ㄒ ㄐㄑㄒ ㄐㄐ ㄑㄑ ㄒㄒ","ㄍㄐ ㄎㄑ ㄏㄒ ㄍㄑ ㄎㄐ ㄏㄐ"]},
+    {id:"bpmf3", title:"注音：翹舌&擦音", desc:"ㄓ ㄔ ㄕ ㄖ；ㄗ ㄘ ㄙ",
+      chunks:["ㄓ ㄔ ㄕ ㄖ ㄓㄔㄕㄖ ㄓㄓ ㄔㄔ ㄕㄕ ㄖㄖ","ㄗ ㄘ ㄙ ㄗㄘㄙ ㄗㄗ ㄘㄘ ㄙㄙ","ㄓㄗ ㄔㄘ ㄕㄙ ㄖㄗ ㄓㄘ ㄕㄗ"]},
+    {id:"bpmf4", title:"注音：介母/韻母", desc:"ㄧ ㄨ ㄩ；ㄚ ㄛ ㄜ ㄝ；ㄞ ㄟ ㄠ ㄡ；ㄢ ㄣ ㄤ ㄥ",
+      chunks:["ㄧ ㄨ ㄩ ㄧㄨㄩ ㄧㄧ ㄨㄨ ㄩㄩ","ㄚ ㄛ ㄜ ㄝ ㄚㄛ ㄜㄝ ㄚㄜ ㄛㄝ","ㄞ ㄟ ㄠ ㄡ ㄞㄟ ㄠㄡ ㄞㄠ ㄟㄡ","ㄢ ㄣ ㄤ ㄥ ㄢㄣ ㄤㄥ ㄢㄤ ㄣㄥ"]},
+    {id:"bpmf5", title:"注音：綜合與聲調", desc:"含 ˙ ˊ ˇ ˋ 及常見音節組合",
+      chunks:["ㄅㄚ ˙ ㄅㄚ ˊ ㄅㄚ ˇ ㄅㄚ ˋ ｜ ㄇㄚ ㄇㄠ ㄇㄟ ㄇㄢ ｜ ㄗㄨ ㄗㄨㄥ ㄗㄧ ㄗㄚ","ㄉㄧ ˊ ㄉㄧ ˇ ㄉㄧ ˋ ｜ ㄍㄨ ㄟ ˊ ㄍㄨ ㄛ ˇ ㄍㄨ ㄛ ˋ","ㄒㄧ ㄤ ˊ ㄒㄧ ㄤ ˇ ㄒㄧ ㄤ ˋ ｜ ㄕ ㄡ ˊ ㄕ ㄡ ˇ ㄕ ㄡ ˋ"]}
+  ];
+
+  const lessonsMap = { english: lessonsEN, bpmf: lessonsBPMF };
+
+  // --- 指法圖例 ---
+  const fingerNames = [
+    ["左小指","LP"],["左無名指","LR"],["左中指","LM"],["左食指","LI"],["右食指","RI"],["右中指","RM"],["右無名指","RR"],["右小指","RP"],["拇指(空白鍵)","LT"]
+  ];
+
+  // --- 鍵盤佈局 ---
+  // 英文US ANSI
+  const KEY_ROWS_EN = [
+    [{l:"`",v:"`",f:"LP"},{l:"1",v:"1",f:"LP"},{l:"2",v:"2",f:"LP"},{l:"3",v:"3",f:"LR"},{l:"4",v:"4",f:"LM"},{l:"5",v:"5",f:"LI"},{l:"6",v:"6",f:"RI"},{l:"7",v:"7",f:"RI"},{l:"8",v:"8",f:"RM"},{l:"9",v:"9",f:"RR"},{l:"0",v:"0",f:"RP"},{l:"-",v:"-",f:"RP"},{l:"=",v:"=",f:"RP"},{l:"⌫",c:"Backspace",w:2.2,f:"NA"}],
+    [{l:"Tab",c:"Tab",w:1.8,f:"NA"},{l:"Q",v:"q",f:"LP"},{l:"W",v:"w",f:"LR"},{l:"E",v:"e",f:"LM"},{l:"R",v:"r",f:"LI"},{l:"T",v:"t",f:"LI"},{l:"Y",v:"y",f:"RI"},{l:"U",v:"u",f:"RI"},{l:"I",v:"i",f:"RM"},{l:"O",v:"o",f:"RR"},{l:"P",v:"p",f:"RP"},{l:"[",v:"[",f:"RP"},{l:"]",v:"]",f:"RP"},{l:"\\",v:"\\",w:1.6,f:"RP"}],
+    [{l:"Caps",c:"CapsLock",w:2.2,f:"NA"},{l:"A",v:"a",f:"LP"},{l:"S",v:"s",f:"LR"},{l:"D",v:"d",f:"LM"},{l:"F",v:"f",f:"LI"},{l:"G",v:"g",f:"LI"},{l:"H",v:"h",f:"RI"},{l:"J",v:"j",f:"RI"},{l:"K",v:"k",f:"RM"},{l:"L",v:"l",f:"RR"},{l:";",v:";",f:"RP"},{l:"'",v:"'",f:"RP"},{l:"⏎",c:"Enter",w:2.2,f:"NA"}],
+    [{l:"Shift",c:"ShiftLeft",w:2.6,f:"NA"},{l:"Z",v:"z",f:"LP"},{l:"X",v:"x",f:"LR"},{l:"C",v:"c",f:"LM"},{l:"V",v:"v",f:"LI"},{l:"B",v:"b",f:"LI"},{l:"N",v:"n",f:"RI"},{l:"M",v:"m",f:"RI"},{l:",",v:",",f:"RM"},{l:".",v:".",f:"RR"},{l:"/",v:"/",f:"RP"},{l:"Shift",c:"ShiftRight",w:2.6,f:"NA"}],
+    [{l:"Ctrl",c:"ControlLeft",w:1.6,f:"NA"},{l:"Win",c:"MetaLeft",w:1.6,f:"NA"},{l:"Alt",c:"AltLeft",w:1.6,f:"NA"},{l:"Space",v:" ",w:7.2,f:"LT"},{l:"Alt",c:"AltRight",w:1.6,f:"NA"},{l:"Win",c:"MetaRight",w:1.6,f:"NA"},{l:"Menu",c:"ContextMenu",w:1.6,f:"NA"},{l:"Ctrl",c:"ControlRight",w:1.6,f:"NA"}]
+  ];
+
+  // 注音(大千式) — 依圖示對齊
+  const KEY_ROWS_BPMF = [
+    [{l:"`",v:"`",f:"LP"},{l:"ㄅ",v:"ㄅ",f:"LP"},{l:"ㄉ",v:"ㄉ",f:"LP"},{l:"ˇ",v:"ˇ",f:"LR"},{l:"ˋ",v:"ˋ",f:"LM"},{l:"ㄓ",v:"ㄓ",f:"LI"},{l:"ˊ",v:"ˊ",f:"RI"},{l:"ㄚ",v:"ㄚ",f:"RI"},{l:"ㄞ",v:"ㄞ",f:"RM"},{l:"ㄢ",v:"ㄢ",f:"RR"},{l:"ㄦ",v:"ㄦ",f:"RP"},{l:"-",v:"-",f:"RP"},{l:"=",v:"=",f:"RP"},{l:"⌫",c:"Backspace",w:2.2,f:"NA"}],
+    [{l:"Tab",c:"Tab",w:1.8,f:"NA"},{l:"ㄆ",v:"ㄆ",f:"LP"},{l:"ㄊ",v:"ㄊ",f:"LR"},{l:"ㄍ",v:"ㄍ",f:"LM"},{l:"ㄐ",v:"ㄐ",f:"LI"},{l:"ㄔ",v:"ㄔ",f:"LI"},{l:"ㄗ",v:"ㄗ",f:"RI"},{l:"ㄧ",v:"ㄧ",f:"RI"},{l:"ㄛ",v:"ㄛ",f:"RM"},{l:"ㄟ",v:"ㄟ",f:"RR"},{l:"ㄣ",v:"ㄣ",f:"RP"},{l:"[",v:"[",f:"RP"},{l:"]",v:"ㄥ",f:"RP"},{l:"\\",v:"\\",w:1.6,f:"RP"}],
+    [{l:"Caps",c:"CapsLock",w:2.2,f:"NA"},{l:"ㄇ",v:"ㄇ",f:"LP"},{l:"ㄋ",v:"ㄋ",f:"LR"},{l:"ㄎ",v:"ㄎ",f:"LM"},{l:"ㄑ",v:"ㄑ",f:"LI"},{l:"ㄕ",v:"ㄕ",f:"LI"},{l:"ㄘ",v:"ㄘ",f:"RI"},{l:"ㄨ",v:"ㄨ",f:"RI"},{l:"ㄜ",v:"ㄜ",f:"RM"},{l:"ㄠ",v:"ㄠ",f:"RR"},{l:"ㄤ",v:"ㄤ",f:"RP"},{l:"'",v:"'",f:"RP"},{l:"⏎",c:"Enter",w:2.2,f:"NA"}],
+    [{l:"Shift",c:"ShiftLeft",w:2.6,f:"NA"},{l:"ㄈ",v:"ㄈ",f:"LP"},{l:"ㄌ",v:"ㄌ",f:"LR"},{l:"ㄏ",v:"ㄏ",f:"LM"},{l:"ㄒ",v:"ㄒ",f:"LI"},{l:"ㄖ",v:"ㄖ",f:"LI"},{l:"ㄙ",v:"ㄙ",f:"RI"},{l:"ㄩ",v:"ㄩ",f:"RI"},{l:",",v:"，",f:"RM"},{l:".",v:"。",f:"RR"},{l:"/",v:"/",f:"RP"},{l:"Shift",c:"ShiftRight",w:2.6,f:"NA"}],
+    [{l:"Ctrl",c:"ControlLeft",w:1.6,f:"NA"},{l:"Win",c:"MetaLeft",w:1.6,f:"NA"},{l:"Alt",c:"AltLeft",w:1.6,f:"NA"},{l:"Space",v:" ",w:7.2,f:"LT"},{l:"Alt",c:"AltRight",w:1.6,f:"NA"},{l:"Win",c:"MetaRight",w:1.6,f:"NA"},{l:"Menu",c:"ContextMenu",w:1.6,f:"NA"},{l:"Ctrl",c:"ControlRight",w:1.6,f:"NA"}]
+  ];
+
+  // 物理鍵→注音對應
+  const latinToBpmf = {
+    "1":"ㄅ","2":"ㄉ","3":"ˇ","4":"ˋ","5":"ㄓ","6":"ˊ","7":"ㄚ","8":"ㄞ","9":"ㄢ","0":"ㄦ","-":"-","=":"=",
+    "q":"ㄆ","w":"ㄊ","e":"ㄍ","r":"ㄐ","t":"ㄔ","y":"ㄗ","u":"ㄧ","i":"ㄛ","o":"ㄟ","p":"ㄣ","[":"[",
+    "]":"ㄥ","\\":"\\",
+    "a":"ㄇ","s":"ㄋ","d":"ㄎ","f":"ㄑ","g":"ㄕ","h":"ㄘ","j":"ㄨ","k":"ㄜ","l":"ㄠ",";":"ㄤ","'":"'",
+    "z":"ㄈ","x":"ㄌ","c":"ㄏ","v":"ㄒ","b":"ㄖ","n":"ㄙ","m":"ㄩ",",":"，",".":"。","/":"/"
+  };
+
+  const buildValueToFinger = function(rows){
+    const map = {}; rows.flat().forEach(function(k){
+      if(k.v){ map[k.v] = k.f || "NA"; if(/[a-z]/.test(k.v)) map[k.v.toUpperCase()] = k.f || "NA"; }
+      if(k.c){ map[k.c] = k.f || "NA"; }
+    });
+    return map;
+  };
+  const valueToFingerEN = buildValueToFinger(KEY_ROWS_EN);
+  const valueToFingerBPMF = buildValueToFinger(KEY_ROWS_BPMF);
+
+  // --- 狀態 ---
+  let lessons = lessonsMap[mode];
+  let lessonIdx=0, chunkIdx=0, text=lessons[0].chunks[0], pos=0;
+  let typed=[], errors=0, streak=0, startedAt=null, muted=true, bigFont=true, showGuide=true;
+
+  // --- DOM ---
+  const modeENBtn = document.getElementById("modeEN");
+  const modeBPMFBtn = document.getElementById("modeBPMF");
+  const lessonSelect = document.getElementById("lessonSelect");
+  const nextChunkBtn = document.getElementById("nextChunk");
+  const toggleFontBtn = document.getElementById("toggleFont");
+  const toggleSoundBtn = document.getElementById("toggleSound");
+  const toggleGuideBtn = document.getElementById("toggleGuide");
+  const resetBtn = document.getElementById("resetBtn");
+  const lessonTitle = document.getElementById("lessonTitle");
+  const lessonDesc = document.getElementById("lessonDesc");
+  const lessonTextEl = document.getElementById("lessonText");
+  const wpmEl = document.getElementById("wpm");
+  const accEl = document.getElementById("acc");
+  const errorsEl = document.getElementById("errors");
+  const streakEl = document.getElementById("streak");
+  const guideCol = document.getElementById("guideCol");
+  const legend = document.getElementById("legend");
+  const currentTarget = document.getElementById("currentTarget");
+  const keyboard = document.getElementById("keyboard");
+
+  function init(){
+    legend.innerHTML = fingerNames.map(function(x){ var name=x[0], code=x[1]; const color = getComputedStyle(document.documentElement).getPropertyValue("--"+code); return '<div class="item"><div class="dot" style="background:'+color+'"></div><div style="font-size:14px">'+name+'</div></div>'; }).join("");
+    renderMode(mode);
+  }
+
+  function renderMode(newMode){
+    mode = newMode; lessons = lessonsMap[mode];
+    modeENBtn.style.fontWeight = mode===MODE_EN? "700":"500";
+    modeBPMFBtn.style.fontWeight = mode===MODE_BPMF? "700":"500";
+    lessonIdx=0; chunkIdx=0; text=lessons[0].chunks[0]; pos=0; typed=[]; errors=0; streak=0; startedAt=null;
+    lessonSelect.innerHTML = lessons.map(function(l,i){return '<option value="'+i+'">'+(i+1)+'. '+l.title+'</option>';}).join("");
+    lessonSelect.value = "0";
+    renderLesson(); renderKeyboard(); renderStats(); highlightTarget();
+  }
+
+  function setLesson(i){ lessonIdx = i; setChunk(0); }
+  function setChunk(i){ chunkIdx = i; text = lessons[lessonIdx].chunks[chunkIdx % lessons[lessonIdx].chunks.length]; pos=0; typed=[]; errors=0; streak=0; startedAt=null; renderLesson(); renderStats(); highlightTarget(); }
+
+  function renderLesson(){ const l = lessons[lessonIdx]; lessonTitle.textContent = l.title; lessonDesc.textContent = l.desc; renderText(); }
+
+  function renderText(){
+    // 使用「兩行視窗切片」避免長文把鍵盤擠下去
+    const before = bigFont ? 18 : 28;   // 游標前可見字數
+    const after  = bigFont ? 70 : 110;  // 游標後可見字數（約兩行）
+    let start = Math.max(0, pos - before);
+    let end = Math.min(text.length, start + before + after);
+    if(end - pos < (bigFont ? 30 : 40)){
+      start = Math.max(0, Math.min(pos - before, text.length - (before + after)));
+      end = Math.min(text.length, start + before + after);
+    }
+
+    const chars = text.split("");
+    let html = '';
+    if(start>0){ html += '<span style="opacity:.4">…</span>'; }
+
+    for(let i=start;i<end;i++){
+      const ch = chars[i];
+      const typedCh = typed[i];
+      const isCursor = i===pos;
+      const normalize = function(s){ return (s==='\n' ? '\n' : String(s||'').toLowerCase()); };
+      const isCorrect = typedCh!==undefined && normalize(typedCh)===normalize(ch);
+      const isWrong = typedCh!==undefined && !isCorrect;
+      const classes = [isCursor?"cursor":"", isCorrect?"ok":"", isWrong?"bad":""].filter(Boolean).join(" ");
+      const show = ch===' ' ? '·&#8203;' : ch;
+      html += '<span class="'+classes+'">'+show+'</span>';
+    }
+
+    if(end<text.length){ html += '<span style="opacity:.4">…</span>'; }
+
+    lessonTextEl.innerHTML = html;
+    lessonTextEl.classList.toggle('big', bigFont);
+    lessonTextEl.classList.toggle('small', !bigFont);
+    document.documentElement.style.setProperty('--lt-max', bigFont ? '120px' : '90px');
+  }
+
+  function getRows(){ return mode===MODE_EN ? KEY_ROWS_EN : KEY_ROWS_BPMF; }
+
+  function renderKeyboard(){
+    const rows = getRows();
+    keyboard.innerHTML = rows.map(function(row){
+      const rowHtml = row.map(function(k){ const w = (k.w||1)*52*0.98; const label = k.l; const finger = k.f||'NA'; return '<button class="kbd" data-label="'+label+'" data-value="'+(k.v||'')+'" data-code="'+(k.c||'')+'" data-finger="'+finger+'" style="width:'+w+'px" title="'+label+'"><span class="label">'+label+'</span></button>'; }).join("");
+      return '<div class="row">'+rowHtml+'</div>'; }).join("");
+
+    keyboard.querySelectorAll('.kbd').forEach(function(btn){ btn.addEventListener('click',function(){ const v = btn.getAttribute('data-value'); const code = btn.getAttribute('data-code'); if(v){ handleKey(v); } else if(code==='Enter'){ handleKey('\n'); } else if(code==='Backspace'){ handleKey('Backspace'); } }); });
+  }
+
+  function highlightTarget(){ keyboard.querySelectorAll('.kbd').forEach(function(btn){ btn.removeAttribute('data-target'); }); const ch = text[pos]||''; let selector=''; if(ch===' '){ selector = '.kbd[data-value=" "]'; currentTarget.textContent='Space(空白)'; } else if(ch==='\n'){ selector = '.kbd[data-code="Enter"]'; currentTarget.textContent='Enter'; } else { selector = '.kbd[data-value="'+CSS.escape(ch)+'"]'; currentTarget.textContent = ch; } const el = keyboard.querySelector(selector); if(el) el.setAttribute('data-target','1'); }
+
+  function beep(ok){ if(muted) return; const ctx = new (window.AudioContext || window.webkitAudioContext)(); const o = ctx.createOscillator(); const g = ctx.createGain(); o.type = ok ? 'sine' : 'square'; o.frequency.value = ok ? 660 : 220; o.connect(g); g.connect(ctx.destination); g.gain.setValueAtTime(0.001, ctx.currentTime); g.gain.exponentialRampToValueAtTime(0.2, ctx.currentTime+0.01); g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime+0.12); o.start(); o.stop(ctx.currentTime+0.13); }
+
+  function normalizeKeyForMode(key){ if(mode===MODE_EN){ return key; } if(latinToBpmf.hasOwnProperty(key)) return latinToBpmf[key]; const low = key.toLowerCase(); if(latinToBpmf.hasOwnProperty(low)) return latinToBpmf[low]; return key; }
+
+  function handleKey(key){ const target = text[pos]; if(target===undefined) return; if(key==='Backspace'){ if(pos>0){ pos--; typed=typed.slice(0,-1); renderText(); renderStats(); highlightTarget(); } return; } if(startedAt===null) startedAt=Date.now(); const kk = key==='Enter'?'\n': normalizeKeyForMode(key); const normalize = function(s){ return (s==='\n'? '\n' : String(s||'').toLowerCase()); }; const ok = normalize(kk)===normalize(target); beep(ok); typed.push(kk); pos++; streak = ok ? (streak+1) : 0; if(!ok) errors++; renderText(); renderStats(); highlightTarget(); if(pos>=text.length){ setTimeout(function(){ setChunk(chunkIdx+1); }, 300); } }
+
+  function renderStats(){ const normalize = function(s){ return (s==='\n'? '\n' : String(s||'').toLowerCase()); }; let correct=0; for(let i=0;i<typed.length;i++){ if(normalize(typed[i])===normalize(text[i]||'')) correct++; } const total = typed.length; const acc = total===0?100:Math.max(0,Math.round((correct/total)*100)); const elapsedMin = startedAt? (Date.now()-startedAt)/1000/60 : 0; const wpm = elapsedMin>0? Math.round((correct/5)/elapsedMin) : 0; wpmEl.textContent = String(wpm); accEl.textContent = String(acc); errorsEl.textContent = String(errors); streakEl.textContent = String(streak); }
+
+  // 綁事件
+  document.addEventListener('keydown', function(e){ const k = e.key; if(k.length===1 || k===' ' || k==='Enter' || k==='Backspace'){ e.preventDefault(); const visual = mode===MODE_EN ? k : normalizeKeyForMode(k); const query = k===' ' ? '.kbd[data-value=" "]' : '.kbd[data-label="'+CSS.escape(k)+'"], .kbd[data-value="'+CSS.escape(visual)+'"]'; keyboard.querySelectorAll(query).forEach(function(el){ el.classList.add('pressed'); }); handleKey(k); } });
+  document.addEventListener('keyup', function(){ keyboard.querySelectorAll('.kbd.pressed').forEach(function(el){ el.classList.remove('pressed'); }); });
+
+  lessonSelect.addEventListener('change', function(e){ setLesson(parseInt(e.target.value,10)); });
+  nextChunkBtn.addEventListener('click', function(){ setChunk(chunkIdx+1); });
+  toggleFontBtn.addEventListener('click', function(){ bigFont=!bigFont; toggleFontBtn.textContent = bigFont? '關閉大字':'開啟大字'; renderText(); });
+  toggleSoundBtn.addEventListener('click', function(){ muted=!muted; toggleSoundBtn.textContent = muted? '開啟音效':'靜音'; });
+  toggleGuideBtn.addEventListener('click', function(){ showGuide=!showGuide; guideCol.style.display = showGuide? 'block':'none'; toggleGuideBtn.textContent = showGuide? '隱藏指法圖':'顯示指法圖'; });
+  resetBtn.addEventListener('click', function(){ typed=[]; pos=0; errors=0; streak=0; startedAt=null; renderText(); renderStats(); highlightTarget(); });
+  document.getElementById('modeEN').addEventListener('click', function(){ renderMode(MODE_EN); });
+  document.getElementById('modeBPMF').addEventListener('click', function(){ renderMode(MODE_BPMF); });
+
+  try{ init(); console.log('[OK] Keyboard trainer loaded'); }catch(err){ console.error(err); const failed = document.createElement('div'); failed.textContent = '腳本錯誤：'+err.message; failed.style.cssText='position:fixed;left:12px;bottom:12px;background:#fee;border:1px solid #fca;padding:8px 10px;border-radius:8px;color:#7f1d1d;z-index:9999'; document.body.appendChild(failed); }
+})();
+</script>
+</body>
+</html>
